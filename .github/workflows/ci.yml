@@ -8,7 +8,7 @@ on:
   #- main
 
 env:
-  IMAGE_NAME: strapi-task8-siva
+  IMAGE_NAME: strapi-task9-siva
 
 
 jobs:
