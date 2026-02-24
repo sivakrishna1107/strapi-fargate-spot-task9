@@ -1,34 +1,43 @@
-variable "subnets" {}
+variable "app_name"{}
+variable "region" {}
+variable "subnets" { type = list(string) }
 variable "ecs_sg" {}
 variable "target_group_arn" {}
 variable "container_port" {}
 variable "ecr_image_url" {}
-variable "app_name" {}
-variable "region" {}
 
+
+############################################
+# Get default ECS execution role
+############################################
+data "aws_iam_role" "ecs_execution_role" {
+  name = "ecsTaskExecutionRole"
+}
+
+############################################
+# CloudWatch Logs
+############################################
 resource "aws_cloudwatch_log_group" "ecs_logs" {
   name = "/ecs/${var.app_name}"
 }
 
+############################################
+# ECS Cluster
+############################################
 resource "aws_ecs_cluster" "cluster" {
   name = "${var.app_name}-cluster"
 }
 
-resource "aws_iam_role" "execution_role" {
-  name = "ecsTaskExecutionRole"
-}
-
-resource "aws_iam_role_policy_attachment" "exec_policy" {
-  role       = aws_iam_role.execution_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-}
-
+############################################
+# Task Definition
+############################################
 resource "aws_ecs_task_definition" "app" {
   family                   = var.app_name
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "256"
-  memory                   = "512"
+
+  cpu    = "256"
+  memory = "512"
 
   execution_role_arn = data.aws_iam_role.ecs_execution_role.arn
 
@@ -46,10 +55,10 @@ resource "aws_ecs_task_definition" "app" {
       ]
 
       logConfiguration = {
-        logDriver = "awslogs"
+        logDriver = "awslogs",
         options = {
-          awslogs-group         = "/ecs/${var.app_name}"
-          awslogs-region        = var.region
+          awslogs-group         = "/ecs/${var.app_name}",
+          awslogs-region        = var.region,
           awslogs-stream-prefix = "ecs"
         }
       }
@@ -57,31 +66,33 @@ resource "aws_ecs_task_definition" "app" {
   ])
 }
 
+############################################
+# ECS Service (Fargate Spot)
+###########################################
 resource "aws_ecs_service" "service" {
-  name            = "${var.app_name}-service"
+  name            = var.app_name
   cluster         = aws_ecs_cluster.cluster.id
-  task_definition = aws_ecs_task_definition.task.arn
-  desired_count   = 2
+  task_definition = aws_ecs_task_definition.app.arn
+  desired_count   = 1
+
+  launch_type = "FARGATE"
 
   network_configuration {
-    subnets          = var.subnets
-    security_groups  = [var.ecs_sg]
+    subnets         = var.subnets
+    security_groups = [var.ecs_sg]
     assign_public_ip = true
   }
 
   capacity_provider_strategy {
-    capacity_provider = "FARGATE"
-    weight = 1
-  }
-
-  capacity_provider_strategy {
     capacity_provider = "FARGATE_SPOT"
-    weight = 3
+    weight            = 1
   }
 
   load_balancer {
     target_group_arn = var.target_group_arn
-    container_name   = "strapi"
+    container_name   = var.app_name
     container_port   = var.container_port
   }
+
+  depends_on = [aws_cloudwatch_log_group.ecs_logs]
 }
