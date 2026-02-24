@@ -9,10 +9,22 @@ data "aws_subnets" "default" {
   }
 }
 
+data "aws_subnet" "selected" {
+  for_each = toset(data.aws_subnets.default.ids)
+  id       = each.value
+}
+
+locals {
+  unique_subnets = values({
+    for s in data.aws_subnet.selected :
+    s.availability_zone => s.id
+  })
+}
+
 output "vpc_id" {
   value = data.aws_vpc.default.id
 }
 
 output "subnets" {
-  value = data.aws_subnets.default.ids
+  value = local.unique_subnets
 }

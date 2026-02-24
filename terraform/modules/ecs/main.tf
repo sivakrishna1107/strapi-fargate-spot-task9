@@ -6,7 +6,7 @@ variable "ecr_image_url" {}
 variable "app_name" {}
 variable "region" {}
 
-resource "aws_cloudwatch_log_group" "logs" {
+resource "aws_cloudwatch_log_group" "ecs_logs" {
   name = "/ecs/${var.app_name}"
 }
 
@@ -15,51 +15,40 @@ resource "aws_ecs_cluster" "cluster" {
 }
 
 resource "aws_iam_role" "execution_role" {
-  name = "${var.app_name}-execution-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [{
-      Effect = "Allow",
-      Principal = { Service = "ecs-tasks.amazonaws.com" },
-      Action = "sts:AssumeRole"
-    }]
-  })
-}
+  name = "ecsTaskExecutionRole"
 
 resource "aws_iam_role_policy_attachment" "exec_policy" {
   role       = aws_iam_role.execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-resource "aws_ecs_task_definition" "task" {
-  family                   = "${var.app_name}-task"
+resource "aws_ecs_task_definition" "app" {
+  family                   = var.app_name
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu    = "512"
-  memory = "1024"
-  execution_role_arn = aws_iam_role.execution_role.arn
+  cpu                      = "256"
+  memory                   = "512"
+
+  execution_role_arn = data.aws_iam_role.ecs_execution_role.arn
 
   container_definitions = jsonencode([
     {
-      name  = "strapi"
+      name  = var.app_name
       image = var.ecr_image_url
+      essential = true
 
-      portMappings = [{
-        containerPort = var.container_port
-        hostPort      = var.container_port
-      }]
-
-      environment = [
-        { name = "NODE_ENV", value = "production" },
-        { name = "PORT", value = "1337" }
+      portMappings = [
+        {
+          containerPort = var.container_port
+          hostPort      = var.container_port
+        }
       ]
 
       logConfiguration = {
-        logDriver = "awslogs",
+        logDriver = "awslogs"
         options = {
-          awslogs-group         = aws_cloudwatch_log_group.logs.name,
-          awslogs-region        = var.region,
+          awslogs-group         = "/ecs/${var.app_name}"
+          awslogs-region        = var.region
           awslogs-stream-prefix = "ecs"
         }
       }
