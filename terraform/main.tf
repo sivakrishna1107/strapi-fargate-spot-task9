@@ -3,18 +3,18 @@ provider "aws" {
 }
 
 module "networking" {
-  source = "./modules"
+  source = "./modules/networking"
 }
 
 module "security" {
-  source         = "./modules"
+  source         = "./modules/security"
   vpc_id         = module.networking.vpc_id
   container_port = var.container_port
   app_name       = var.app_name
 }
 
 module "alb" {
-  source          = "./modules"
+  source          = "./modules/alb"
   vpc_id          = module.networking.vpc_id
   subnets         = module.networking.subnets
   alb_sg          = module.security.alb_sg
@@ -23,7 +23,7 @@ module "alb" {
 }
 
 module "ecs" {
-  source            = "./modules"
+  source            = "./modules/ecs"
   subnets           = module.networking.subnets
   ecs_sg            = module.security.ecs_sg
   target_group_arn  = module.alb.target_group_arn
