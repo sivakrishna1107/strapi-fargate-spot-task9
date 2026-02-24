@@ -42,7 +42,7 @@ resource "aws_ecs_task_definition" "my_strapi_app" {
   network_mode             = "awsvpc"
   cpu                      = "512"
   memory                   = "1024"
-  execution_role_arn       = aws_iam_role.ecs_execution.arn
+  execution_role_arn       = "arn:aws:iam::811738710312:role/ecs_fargate_taskRole"
 
   container_definitions = jsonencode([
     {
@@ -105,7 +105,7 @@ resource "aws_ecs_task_definition" "my_strapi_app" {
 resource "aws_ecs_service" "my_strapi_service" {
   name            = "siva-task-9-service"
   cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.my_strapi_app.arn
+  task_definition = "arn:aws:iam::811738710312:role/ecs_fargate_taskRole"
   desired_count   = 1
 
   capacity_provider_strategy {
