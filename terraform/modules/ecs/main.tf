@@ -16,6 +16,7 @@ resource "aws_ecs_cluster" "cluster" {
 
 resource "aws_iam_role" "execution_role" {
   name = "ecsTaskExecutionRole"
+}
 
 resource "aws_iam_role_policy_attachment" "exec_policy" {
   role       = aws_iam_role.execution_role.name
