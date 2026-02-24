@@ -20,6 +20,9 @@ jobs:
         with:
           terraform_version: 1.6.6
 
+      - name: Terraform Format
+        run: terraform fmt -recursive
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
