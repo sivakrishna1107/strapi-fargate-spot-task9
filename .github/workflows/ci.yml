@@ -43,6 +43,6 @@ jobs:
 
       - name: Build & Push
         run: |
-          IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/strapi-task9-siva:latest
+          IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/strapi-task9-siva:latest
           docker build -t $IMAGE_URI .
           docker push $IMAGE_URI
