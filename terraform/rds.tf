@@ -18,8 +18,8 @@
   #}
 #}
 
-data "aws_db_subnet_group" "rds_subnet" {
-  name = "siva-t-9-rds-subnet"
+data "aws_security_group" "rds" {
+  name = "t-9-rds-sg"
 }
 
 # Subnet group
