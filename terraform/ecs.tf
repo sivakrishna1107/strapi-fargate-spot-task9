@@ -20,15 +20,15 @@ data "aws_subnets" "default" {
     #to_port     = 1337
     #protocol    = "tcp"
     #cidr_blocks = ["0.0.0.0/0"]
-  }
+  #}
 
   #egress {
     #from_port   = 0
     #to_port     = 0
     #protocol    = "-1"
     #cidr_blocks = ["0.0.0.0/0"]
-  }
-}
+  #}
+#}
 
 data "aws_security_group" "ecs" {
   id = "sg-0ae4ee99705fe177b"
