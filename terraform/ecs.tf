@@ -105,7 +105,7 @@ resource "aws_ecs_task_definition" "my_strapi_app" {
 resource "aws_ecs_service" "my_strapi_service" {
   name            = "siva-task-9-service"
   cluster         = aws_ecs_cluster.main.id
-  task_definition = "arn:aws:iam::811738710312:role/ecs_fargate_taskRole"
+  task_definition = "aws_ecs_task_definition.my_strapi_app.arn"
   desired_count   = 1
 
   capacity_provider_strategy {
