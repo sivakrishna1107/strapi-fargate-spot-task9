@@ -1,6 +1,6 @@
 # RDS Security Group
 resource "aws_security_group" "rds" {
-  name   = "task-9-rds-sg"
+  name   = "t-9-rds-sg"
   vpc_id = data.aws_vpc.default.id
 
   ingress {
@@ -20,13 +20,13 @@ resource "aws_security_group" "rds" {
 
 # Subnet group
 resource "aws_db_subnet_group" "rds_subnet" {
-  name       = "siva-task-9-rds-subnet"
+  name       = "siva-t-9-rds-subnet"
   subnet_ids = data.aws_subnets.default.ids
 }
 
 # RDS MySQL
 resource "aws_db_instance" "strapi" {
-  identifier              = "task-9-strapi-db"
+  identifier              = "t-9-strapi-db"
   engine                  = "mysql"
   engine_version          = "8.0"
   instance_class          = "db.t3.micro"
