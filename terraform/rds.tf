@@ -21,7 +21,7 @@ resource "aws_security_group" "rds" {
 # Subnet group
 resource "aws_db_subnet_group" "rds_subnet" {
   name       = "siva-t-9-rds-subnet"
-  #subnet_ids = data.aws_subnets.default.ids
+  subnet_ids = data.aws_subnets.default.ids
 }
 
 # RDS MySQL
