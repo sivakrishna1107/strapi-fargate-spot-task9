@@ -11,7 +11,7 @@ data "aws_subnets" "default" {
 
 # ECS Security Group
 resource "aws_security_group" "ecs" {
-  name        = "siva-t-9-ecs-sg"
+  name        = "siva-task-9-ecs-sg"
   description = "Allow HTTP traffic"
   vpc_id      = data.aws_vpc.default.id
 
@@ -32,7 +32,7 @@ resource "aws_security_group" "ecs" {
 
 # ECS Cluster
 resource "aws_ecs_cluster" "main" {
-  name = "siva-t-9-cluster"
+  name = "siva-task-9-cluster"
 }
 
 # ECS Task Definition
@@ -104,9 +104,9 @@ resource "aws_ecs_task_definition" "my_strapi_app" {
 
 # ECS Service
 resource "aws_ecs_service" "my_strapi_service" {
-  name            = "siva-t-9-service"
+  name            = "siva-task-9-service"
   cluster         = aws_ecs_cluster.main.id
-  task_definition = "aws_ecs_task_definition.my_strapi_app.arn"
+  task_definition = "arn:aws:iam::811738710312:role/ecs_fargate_taskRole"
   desired_count   = 1
 
   capacity_provider_strategy {
