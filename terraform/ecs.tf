@@ -37,7 +37,7 @@ resource "aws_ecs_cluster" "main" {
 
 # ECS Task Definition
 resource "aws_ecs_task_definition" "my_strapi_app" {
-  family                   = "task-9-my-strapi-app"
+  family                   = "t-9-my-strapi-app"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = "512"
