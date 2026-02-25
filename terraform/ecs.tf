@@ -70,7 +70,7 @@ resource "aws_ecs_task_definition" "my_strapi_app" {
         },
         {
           name  = "DATABASE_NAME"
-          value = "strapi"
+          value = "strapi-siva"
         },
         {
           name  = "DATABASE_USERNAME"
