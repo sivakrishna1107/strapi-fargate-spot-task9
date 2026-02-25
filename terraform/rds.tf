@@ -8,15 +8,15 @@
     #to_port         = 3306
     #protocol        = "tcp"
     #security_groups = [aws_security_group.ecs.id]  # Allow ECS SG
-  }
+  #}
 
   #egress {
     #from_port   = 0
     #to_port     = 0
     #protocol    = "-1"
     #cidr_blocks = ["0.0.0.0/0"]
-  }
-}
+  #}
+#}
 
 data "aws_db_subnet_group" "rds_subnet" {
   name = "siva-t-9-rds-subnet"
